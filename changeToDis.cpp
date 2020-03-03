@@ -6,7 +6,8 @@
 #include <unordered_map>
 
 #include "./DijkstraForDis.h"
-#include "./Path.h"
+//#include "./Path.h"
+#include "newPath.h"
 
 using namespace std;
 
@@ -23,10 +24,15 @@ struct pair_hash
 };
 
 void print_matrix(Dis **a, int size);
+void print_num_matrix(Dis **a, int size);
+
 map<int, string> num_to_name;
 map<string, int> name_to_num;
 
 //取小运算
+//取可以直达的两种路径里代价比较小的那一个
+//并且combine过后直接使存在路径的情况value = 1，也就是可以直达
+//在之后的运算里也用这个新的value作代价了
 Dis** combineAs(Dis ***A, int route_num, int size) {
     Dis **res = new Dis*[size];
     for(int i = 0; i < size; i++) {
@@ -37,15 +43,16 @@ Dis** combineAs(Dis ***A, int route_num, int size) {
         for(int k = 0; k < size; k++)
             res[j][k].value = INT_MAX;
 
-    for(int j = 0; j < size; j++)
+    for(int j = 0; j < size; j++) {
         for(int k = 0; k < size; k++) {
             for(int i = 0; i < route_num; i++) {
-                res[j][k].value = std::min(A[i][j][k].value, res[j][k].value);
+                res[j][k] = A[i][j][k].value < res[j][k].value ? A[i][j][k] : res[j][k];
             }
             if(res[j][k].value != INT_MAX && res[j][k].value != 0) {
                 res[j][k].value = 1; 
             }
         }
+    }
     return res;
 }
  
@@ -81,6 +88,9 @@ int main() {
     //int ***A = new int**[route_num];
     Dis ***A = new Dis**[route_num];
 
+    //读取数据，作一些初始化工作，对角线是0，没有连通是无穷大
+    ////////////////////////////////////////////////////////////////////
+
     for(int i = 0; i < route_num; i++) {
         //A[i] = new int*[num];
         A[i] = new Dis*[num];
@@ -110,6 +120,7 @@ int main() {
             front_name = behind_name;
         }
     }
+    ////////////////////////////////////////////////////////////////////
 
     /*
     int size = num_to_name.size();
@@ -126,12 +137,24 @@ int main() {
     //TODO
     //重写一个Dijkstra for Dis
     //
-    //调用dijkstra算法
+    //调用dijkstra算法，算出来每个矩阵的直达情况，然后给出距离
     for(int i = 0; i < route_num; i++) {
-        Dijkstra(A[i], num);
+        Dijkstra(A[i], num, i);
+    }
+
+    for(int i = 0; i < route_num; i++) {
+        print_num_matrix(A[i], num);
+        printf("///////////////////////////////\n");
+    }     
+
+    for(int i = 0; i < route_num; i++) {
+    //for(int i = 0; i < 1; i++) {
+        cout << "route:" << i+1 << endl;
+        print_matrix(A[i], num);
     }
 
     //输出路线信息，检查是否正确
+    /*
     unordered_map<pair<int, int>, int, pair_hash> reach;
     for(int i = 0; i < route_num; i++) {
         for(int j = 0; j < num; j++) {
@@ -151,13 +174,15 @@ int main() {
         print_matrix(A[i], num);
         reach.clear();
     }
+    */
+    //改用新的输出路线的方式
     
     //参考论文里面，对所有A[i]，算出来一个min矩阵，也就是min[i][j] = min(A[k][i][j], k = 0, 1, 2, 3...
+    //num是公交站的数量，在这里size和num说的是同一个东西
     Dis **B =  
         combineAs(A, route_num, num);
 
-    Dijkstra(B, num);
-
+    Dijkstra(B, num, -1);
     cout << "after combination and Dijstra algorithm: \n";
     for(int i = 0; i < num; i++) {
         for(int j = 0; j < num; j++)
@@ -168,6 +193,10 @@ int main() {
         cout << endl;
     }
 
+    Dis **D = B;
+    
+    print_matrix(D, num);
+    
     
 
 
@@ -184,17 +213,38 @@ int main() {
 }
 
 //打印矩阵的信息
-void print_matrix(Dis **a, int size) {
-    for(int i = 0; i < size; i++) {
-        for(int j = 0; j <= size; j++) {
-            /*
-            if(a[i][j] != 0 && a[i][j] != INT_MAX) {
-                cout << '[' << i << ']' << '[' << j << ']' << '\n';
-                cout << num_to_name[i] << "--" << num_to_name[j] << endl;
+void print_matrix(Dis **B, int num) {
+    
+    //这个矩阵是35 × 35，下标是[0-34][0-34]
+    //直接输出出来
+    
+    for(int i = 0; i < num; i++) {
+        //for(int j = 0; j < num; j++) {
+        //更改为上半片区
+        for(int j = i; j < num; j++) {
+            if(B[i][j].value == INT_MAX || B[i][j].value == 0) continue;
+            cout << "position [" << num_to_name[i] << "][" << num_to_name[j] << "] :" << endl;
+            cout << "有" << B[i][j].path.size() << "条路径" << endl;
+            for(auto onePath : B[i][j].path) {
+                for(auto edge : onePath) {
+                    cout << num_to_name[edge.vex] << "(" << edge.route_num+1 << "号线) --> ";
+                }
+                cout << endl << "|" << endl;
             }
-            */
+            cout << "\n\n";
         }
     }
-    cout << endl << "///////////////////////////////////////////////////////////////" << endl;
+
 }
 
+void print_num_matrix(Dis **a, int size) {
+    for(int i = 0; i < size; i++) {
+        for(int j = 0; j < size; j++) {
+            if(a[i][j].value != INT_MAX)
+                cout << a[i][j].value << ' ';
+            else
+                cout << "∞ ";
+        }
+        cout << endl;
+    }
+}

@@ -1,5 +1,17 @@
 #include <iostream>
 #include "newPath.h"
+#include <vector>
+
+const vector<Path> operator * (const vector<Path> &lhs, const vector<Path> &rhs) {
+    vector<Path> res;
+    for(int i = 0; i < lhs.size(); i++) {
+        for(int j = 0; j < rhs.size(); j++) {
+            res.push_back(lhs[i] + rhs[j]);
+        }
+    }
+    return res;
+}
+
 using namespace std;
 
 int main() {
@@ -24,10 +36,22 @@ int main() {
     for_b2.addEdge(2, 3);
     b.addPath(for_b2);
 
-    a.combinePath(b);
+    Dis c;
+    c.assignPath(a.path * b.path);
     cout << "////////////////////////////////////////////" << endl;
-    cout << a.path.size() << endl;
-    for(auto i : a.path) {
+    cout << c.path.size();
+    for(auto i : c.path) {
+        for(auto j : i) {
+            cout << j.vex << ' ';
+        }
+        cout << endl;
+    }
+
+
+    vector<Path> res = a.path * b.path;
+    cout << "////////////////////////////////////////////" << endl;
+    cout << res.size() << endl;
+    for(auto i : res) {
         for(auto j : i) {
             cout << j.vex << ' ';
         }

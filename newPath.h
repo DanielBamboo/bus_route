@@ -6,10 +6,14 @@
 // 关于为什么要用数组我想说没想到什么好的数据结构可以方便地复制和删除并且占用空间小
 // 换用vector了
 // addEdge用可变参数?
-#ifndef __PATH_H__
-#define __PATH_H__
+#ifndef __NEW_PATH_H__
+#define __NEW_PATH_H__
 
 #include <vector>
+#include <iostream>
+#include <climits>
+using std::cout;
+using std::endl;
 using std::vector;
 
 struct Edge {
@@ -63,7 +67,7 @@ public:
     
     const Path operator +(const Path & rhs) const {
         Path tmp(*this);
-        copy(rhs.edge.begin(), rhs.edge.end(), back_inserter(tmp.edge));
+        copy(rhs.edge.begin()+1, rhs.edge.end(), back_inserter(tmp.edge));
         return tmp;
     }
 
@@ -79,6 +83,21 @@ public:
         return edge.end();
     }
 
+    
+    Path reversePath() {
+        Path reverPath;
+        vector<Edge>::reverse_iterator r_iter;
+        for(r_iter = edge.rbegin(); r_iter != edge.rend(); r_iter++) {
+            reverPath.edge.push_back(*r_iter);
+        }
+        return reverPath;
+    }
+
+    int len() {
+        return edge.size(); 
+    }
+    
+
     /*
     Path *next;
     */
@@ -87,7 +106,8 @@ private:
     //copy(v1.begin(), v1.end(), back_inserter(v2));
 };
 
-const vector<Path> operator+(const vector<Path> &lhs, const vector<Path> &rhs);
+// 我觉得乘号比较合适
+const vector<Path> operator * (const vector<Path> &lhs, const vector<Path> &rhs);
 
 
 class Dis {
@@ -96,8 +116,13 @@ public:
     //bool visited;
     int value;
     vector<Path> path;
+    bool initialized;
 
     // methods
+    
+    Dis() : initialized(false) {
+        value = INT_MAX; 
+    }
     
 
 
@@ -105,9 +130,32 @@ public:
         path.push_back(t);
     }
 
-    void combinePath(const Dis &other) {
-        this->path = this->path + other.path;
+    void addPath(const vector<Path> &t) {
+        
+        cout << "addPath" << endl;
+        copy(t.begin(), t.end(), back_inserter(this->path));
+        cout << "addPath done!" << endl;
     }
+
+    // ! 这个好像有点问题，不应该这么写？
+    void combinePath(const Dis &other) {
+        this->path = this->path * other.path;
+    }
+
+    void assignPath(const vector<Path> &other) {
+        //path.clear();
+        path = other;
+    }
+
+    void assignReversedPaths(const Dis & other) {
+        path.clear();
+        for(auto i : other.path) {
+            path.push_back(i.reversePath());
+        }
+    }
+
+    
+
     /*
     void addPath(const Path & rhs) {
         Path *new_path = new Path(rhs);
@@ -150,7 +198,8 @@ public:
 };
 
 
-const vector<Path> operator+(const vector<Path> &lhs, const vector<Path> &rhs) {
+/*
+const vector<Path> operator * (const vector<Path> &lhs, const vector<Path> &rhs) {
     vector<Path> res;
     for(int i = 0; i < lhs.size(); i++) {
         for(int j = 0; j < rhs.size(); j++) {
@@ -159,4 +208,5 @@ const vector<Path> operator+(const vector<Path> &lhs, const vector<Path> &rhs) {
     }
     return res;
 }
+*/
 #endif
