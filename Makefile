@@ -1,8 +1,8 @@
-mapToNum : mapToNum.o Dijkstra.o
-	g++ -o mapToNum mapToNum.o Dijkstra.o
+changeToDis : changeToDis.o DijkstraForDis.o
+	g++ -o changeToDis changeToDis.o DijkstraForDis.o
 
-mapToNum.o : mapToNum.cpp ./Dijkstra.h
-	g++ -c mapToNum.cpp
+changeToDis.o : ./changeToDis.cpp ./DijkstraForDis.h ./Path.h
+	g++ -c ./changeToDis.cpp
 
-Dijkstra.o : Dijkstra.h Dijkstra.cpp
-	g++ -c Dijkstra.cpp
+DijkstraForDis.o : Dijkstra.h Path.h DijkstraForDis.cpp
+	g++ -c DijkstraForDis.cpp
