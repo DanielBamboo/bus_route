@@ -58,13 +58,13 @@ public:
         edge.assign(edge.begin(), edge.end());
     }
     // TODO
-    // 让这个类可以被迭代器遍历
+    // 让这个类可以被迭代器遍历 done
     //
     // 到底是哪个加法要做文章？
+    //
+    // 这个加号得改，也就是删除的是lhs的末尾还是rhs的开头
     
     */
-    
-    
     const Path operator +(const Path & rhs) const {
         Path tmp(*this);
         copy(rhs.edge.begin()+1, rhs.edge.end(), back_inserter(tmp.edge));
@@ -93,7 +93,7 @@ public:
         return reverPath;
     }
 
-    int len() {
+    int len() const {
         return edge.size(); 
     }
     
@@ -101,7 +101,7 @@ public:
     /*
     Path *next;
     */
-private:
+//private:
     vector<Edge> edge;
     //copy(v1.begin(), v1.end(), back_inserter(v2));
 };
@@ -132,9 +132,10 @@ public:
 
     void addPath(const vector<Path> &t) {
         
-        cout << "addPath" << endl;
-        copy(t.begin(), t.end(), back_inserter(this->path));
-        cout << "addPath done!" << endl;
+        //cout << "addPath" << endl;
+        //copy(t.begin(), t.end(), back_inserter(this->path));
+        path.insert(path.end(), t.begin(), t.end());
+        //cout << "addPath done!" << endl;
     }
 
     // ! 这个好像有点问题，不应该这么写？

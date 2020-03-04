@@ -19,7 +19,7 @@ void print_path(const vector<Path> path) {
     for(auto i : path) {
         cout << "path" << ++cnt << ": ";
         for(auto j : i) {
-            cout << j.vex << ' ';
+            cout << j.vex << '(' << j.route_num << ") "; 
         }
         cout << endl;
     }
@@ -127,22 +127,39 @@ void Dijkstra(Dis **arc, int begin, int size, int route_num) {
                     if(debug) {
                         printf("\n");
                         printf("assign 一条边 assign 之后path.size = %d\n", arc[begin][i].path.size());
-                        printf("path lhs:");
+                        printf("path lhs:\n");
                         print_path(arc[begin][min_i].path);
-                        printf("path rhs:");
+                        printf("path rhs:\n");
                         print_path(arc[min_i][i].path);
-                        printf("arc[%d][%d].value = arc[%d][%d].value + arc[%d][%d].value\n", begin, i, begin, min_i, min_i, i);
+                        //printf("arc[%d][%d].value > arc[%d][%d].value + arc[%d][%d].value\n", begin, i, begin, min_i, min_i, i);
+
+                        printf("arc[%d][%d].value(%d) > arc[%d][%d].value(%d) + arc[%d][%d].value(%d)\n", begin, i, arc[begin][i].value,  begin, min_i, arc[begin][min_i].value, min_i, i, arc[min_i][i].value);
                         print_path(arc[begin][i].path);
                         printf("\n");
+
                     }
                 } 
                 //如果相等，那么就增加一条路径
                 //好像有一个问题，会出现重复的path
-                /*
-                else if( arc[min_i][i].value != 0 && arc[begin][i].value == arc[begin][min_i].value + arc[min_i][i].value ) {
+                
+                else if( arc[begin][i].value != 0 &&
+                        arc[begin][min_i].value != 0 &&
+                        arc[min_i][i].value != 0 &&
+                        arc[begin][i].value == arc[begin][min_i].value + arc[min_i][i].value ) {
+
                     arc[begin][i].addPath(arc[begin][min_i].path * arc[min_i][i].path );
+
+
+                    printf("\n == situation, addPath\n");
+                    printf("path lhs:\n");
+                    print_path(arc[begin][min_i].path);
+                    printf("path rhs:\n");
+                    print_path(arc[min_i][i].path);
+
+                    printf("arc[%d][%d].value(%d) == arc[%d][%d].value(%d) + arc[%d][%d].value(%d)\n", begin, i, arc[begin][i].value,  begin, min_i, arc[begin][min_i].value, min_i, i, arc[min_i][i].value);
+                    print_path(arc[begin][i].path);
+                    printf("\n");
                 }
-                */
                 /*
                 printf("update arc[%d][%d] = arc[%d][%d] + arc[%d][%d] \n", begin, i, begin, min_i, min_i, i); 
                 */

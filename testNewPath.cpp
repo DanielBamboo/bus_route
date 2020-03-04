@@ -1,6 +1,7 @@
 #include <iostream>
 #include "newPath.h"
 #include <vector>
+#include <set>
 
 const vector<Path> operator * (const vector<Path> &lhs, const vector<Path> &rhs) {
     vector<Path> res;
@@ -14,7 +15,51 @@ const vector<Path> operator * (const vector<Path> &lhs, const vector<Path> &rhs)
 
 using namespace std;
 
+//把这个迁移到成员函数
+bool operator < (const Path &lhs, const Path &rhs) {
+    //return lhs.len() < rhs.len();
+    if(lhs.len() == rhs.len()) {
+        for(int i = 0; i < lhs.len(); i++) {
+            if(lhs.edge[i].vex != rhs.edge[i].vex) {
+                return lhs.edge[i].vex < rhs.edge[i].vex;
+            } else if(lhs.edge[i].route_num != rhs.edge[i].route_num) {
+                return lhs.edge[i].route_num < rhs.edge[i].route_num;
+            }
+        } 
+    } else {
+        return lhs.len() < rhs.len();
+    }
+}
+
 int main() {
+    //需要提供一个重载
+    set<Path> path;
+    
+    Path path1;
+    path1.addEdge(4, 1);
+    path1.addEdge(3, 1);
+    path1.addEdge(2, 1);
+    path1.addEdge(1, 1);
+    path1.addEdge(0, 1);
+
+    Path path2;
+    path2.addEdge(4, 1);
+    path2.addEdge(3, 1);
+    path2.addEdge(2, 1);
+    path2.addEdge(1, 1);
+    path2.addEdge(0, 2);
+
+    path.insert(path1);
+    path.insert(path2);
+    
+    cout << "size = " << path.size() << endl;
+
+
+    
+
+
+
+    return 0;
     Dis a;
     Dis b;
     Path for_a;
