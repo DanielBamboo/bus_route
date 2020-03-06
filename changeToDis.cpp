@@ -4,10 +4,12 @@
 #include <cstring>
 #include <climits>
 #include <unordered_map>
+#include <cstdio>
 
 #include "./DijkstraForDis.h"
 //#include "./Path.h"
-#include "newPath.h"
+//#include "newPath.h"
+#include "setPath.h"
 
 using namespace std;
 
@@ -25,6 +27,7 @@ struct pair_hash
 
 void print_matrix(Dis **a, int size);
 void print_num_matrix(Dis **a, int size);
+void print_path_num_matrix(Dis **a, int size);
 
 map<int, string> num_to_name;
 map<string, int> name_to_num;
@@ -196,6 +199,8 @@ int main() {
     Dis **D = B;
     
     print_matrix(D, num);
+    cout << "print path num matrix" << endl;
+    print_path_num_matrix(D, num);
     
     
 
@@ -246,5 +251,14 @@ void print_num_matrix(Dis **a, int size) {
                 cout << "∞ ";
         }
         cout << endl;
+    }
+}
+
+void print_path_num_matrix(Dis **a, int size) {
+    for(int i = 0; i < size; i++) {
+        for(int j = 0; j < size; j++) {
+            printf("%2ld ", a[i][j].path.size());            
+        }
+        printf("\n");
     }
 }

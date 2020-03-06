@@ -7,14 +7,15 @@
 
 #include "./DijkstraForDis.h"
 //#include "./Path.h"
-#include "newPath.h"
+//#include "newPath.h"
+#include "setPath.h"
 
 // TODO
 // 还差等于的情况没写，当时因为出了bug所以注释掉了
 
 using namespace std;
 
-void print_path(const vector<Path> path) {
+void print_path(const set<Path> path) {
     int cnt = 0;
     for(auto i : path) {
         cout << "path" << ++cnt << ": ";

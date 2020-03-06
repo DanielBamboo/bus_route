@@ -1,10 +1,10 @@
-#include "newPath.h"
+#include "setPath.h"
 
-const vector<Path> operator * (const vector<Path> &lhs, const vector<Path> &rhs) {
-    vector<Path> res;
-    for(int i = 0; i < lhs.size(); i++) {
-        for(int j = 0; j < rhs.size(); j++) {
-            res.push_back(lhs[i] + rhs[j]);
+const std::set<Path> operator * (const std::set<Path> &lhs, const std::set<Path> &rhs) {
+    std::set<Path> res;
+    for(auto i : lhs) {
+        for(auto j : rhs) {
+            res.insert(i+j);
         }
     }
     return res;
