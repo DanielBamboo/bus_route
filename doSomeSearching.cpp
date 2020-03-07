@@ -9,18 +9,23 @@
 #include <set>
 #include <vector>
 
+//TODO
+//stations是不是可以删除
+
 //#include "./DijkstraForDis.h"
 //#include "./Path.h"
 //#include "newPath.h"
 #include "setPath.h"
-//#include "./note/Route_man.cpp"
+#include "./note/Route_man.h"
 
 using namespace std;
 
+/*
 struct Route {
     int num;
     vector<int> stations;
 };
+*/
 
 
 struct pair_hash
@@ -106,7 +111,11 @@ int main() {
     int route_num;
     fin >> route_num;
 
-    Route *routes = new Route[route_num]; // 储存所有线路
+    //Route *routes = new Route[route_num]; // 储存所有线路
+    //replaced with Route_man
+    
+    Route_man route_man;
+
     //
     set<int> stations; // 保存所有站点
     cout << "route_num = " << route_num << endl;
@@ -120,6 +129,7 @@ int main() {
     ////////////////////////////////////////////////////////////////////
 
     for(int i = 0; i < route_num; i++) {
+
         //A[i] = new int*[num];
         A[i] = new Dis*[num];
 
@@ -142,18 +152,30 @@ int main() {
         route_to_which_matrix[NoDot] = i;
         matrix_target_route[i] = NoDot;
 
+        route_man.addRoute(NoDot);
+        cout << route_man.debug_size() << "debug size" << endl;
+
         int route_len;
         fin >> route_len;
         string front_name, behind_name; //要实现更新节点，需要记录下前一个和后一个，然后用map获取需要更新的坐标
         //更新邻接矩阵
         //由于我们只有一个单向的路线，所以在用它来更新邻接矩阵的时候需要记下前一个，不然指针跳到下一个可就没办法知道前一个是什么了，从而没办法更新A[][]
         fin >> front_name;
-        routes[i].stations.push_back(name_to_num[front_name]);
+
+        //routes[i].stations.push_back(name_to_num[front_name]);
+        //replaced with route_man
+        route_man[NoDot].addStop(name_to_num[front_name]);
+        
+
         stations.insert(name_to_num[front_name]);
 
         for(int k = 1; k < route_len; k++) {
             fin >> behind_name; 
-            routes[i].stations.push_back(name_to_num[behind_name]);
+            
+            //routes[i].stations.push_back(name_to_num[behind_name]);
+            //replaced with route_man
+            route_man[NoDot].addStop(name_to_num[behind_name]);
+
             stations.insert(name_to_num[behind_name]);
             
             A[i][name_to_num[front_name]][name_to_num[behind_name]].value = A[i][name_to_num[behind_name]][name_to_num[front_name]].value = 1;
@@ -161,10 +183,10 @@ int main() {
         }
     }
 
-    for(int i = 0; i < route_num; i++) {
-        cout << "route " << i << endl;
-        for(auto i : routes[i].stations) {
-            cout << num_to_name[i] << endl;
+    for(auto i : route_to_which_matrix) {
+        cout << "route " << i.first << endl;
+        for(auto j : route_man[i.first].stops) {
+            cout << num_to_name[j] << endl;
         }
         cout << endl;
     }

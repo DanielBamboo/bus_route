@@ -40,6 +40,8 @@ flags = [
     '-isystem',
     '/usr/include/c++/7',
     '-I~/college/Data_Structure/bus_route/',
+    '-I~/college/Data_Structure/bus_route/note',
+    '-I~/college/Data_Structure/bus_route/file',
     '-I/usr/include/boost/'
 
     
