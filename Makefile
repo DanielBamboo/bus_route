@@ -1,8 +1,8 @@
-changeToDis : changeToDis.o DijkstraForDis.o setPath.o
-	g++ -o ./build/changeToDis changeToDis.o DijkstraForDis.o setPath.o
+doSomeSearching : doSomeSearching.o DijkstraForDis.o setPath.o
+	g++ -o ./build/doSomeSearching doSomeSearching.o DijkstraForDis.o setPath.o
 
-changeToDis.o : changeToDis.cpp DijkstraForDis.h setPath.h
-	g++ -c changeToDis.cpp
+doSomeSearching.o : doSomeSearching.cpp DijkstraForDis.h setPath.h
+	g++ -c doSomeSearching.cpp
 
 DijkstraForDis.o : Dijkstra.h setPath.h DijkstraForDis.cpp
 	g++ -c DijkstraForDis.cpp
