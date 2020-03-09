@@ -12,6 +12,7 @@
 // vec.erase(it)
 
 int main() {
+    /* 
     Route oneRoute;
     oneRoute.addStop(1);
     oneRoute.addStop(2);
@@ -30,7 +31,8 @@ int main() {
     
 
     return 0;
-    Route_man man;
+    */
+    Route_man<Route> man;
     man.addRoute(2);
     std::cout << man.debug_size() << std::endl;
     for(int i = 0; i < 5; i++)
@@ -53,6 +55,17 @@ int main() {
     std::cout << "add done!" << std::endl;
     std::cout << man.debug_size() << std::endl;
 
+    auto it = man.begin();
+    auto end = man.end();
+
+    for(it; it != end; it++) {
+        for(auto i : (*it).stops) {
+            std::cout << i << ' ';
+        }
+        std::cout << std::endl;
+    }
+
+    /*
     man.del(3);
     man.del(2);
     man.del(1);
@@ -61,5 +74,8 @@ int main() {
     for(auto i : man[5].stops) {
         std::cout << i;
     }
+    */
+
+    std::cout << "leaving ..." << std::endl;
     return 0;
 }

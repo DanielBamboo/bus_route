@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_set>
 #include <iostream>
+#include <iterator>
 
 struct Route {
     std::vector<int> stops;
@@ -28,18 +29,27 @@ struct Route {
 
     //增加编号为num的站点在stops数组的index之前，这个number由map分配，map[cnt++] = string
     void insertStop(int number, int index) {
-        stops.insert(stops.begin() + index, number);
+        stops.insert(stops.begin() + index - 1, number);
     } 
 };
 
+template<typename T>
+class Route_man_Iterator;
+
+//TODO
+//把Route_man改成类模板
+
 // set::erase() 删除特定元素
 // route management
+template<typename T = Route>
 class Route_man {
+    friend class Route_man_Iterator<T>;
 private:
     int num;
     Route *head;
     Route *tail;
     std::unordered_set<int> route_indexes;
+
 public:
     Route_man(): num(0), head(nullptr), tail(nullptr) {
 
@@ -130,10 +140,60 @@ public:
         }
         return cnt;
     }
+
+    Route_man_Iterator<T> begin() {
+        return Route_man_Iterator<T>(*this);
+    }
+
+    Route_man_Iterator<T> end() {
+        Route_man_Iterator<T> end_iter(*this);
+        while((end_iter.value)->next != nullptr) {
+            end_iter.value = (end_iter.value)->next;
+        }
+        return end_iter;
+    }
 };
 
 // std::vector::iterator it = vec.begin() + 10
 // vec.erase(it)
+//
+
+
+template<typename T = Route>
+class Route_man_Iterator : public std::iterator<std::forward_iterator_tag, T> {
+    friend class Route_man<T>;
+protected:
+    Route_man<T> &route_man;
+    T *value;
+public:
+    explicit Route_man_Iterator(Route_man<T> & a_route_man) : route_man(a_route_man), value(a_route_man.head) {}
+
+    Route_man_Iterator<T> & operator = (const Route_man_Iterator<T> & src) {
+        route_man = src.route_man;
+        value = src.value;
+    }
+
+    T & operator * () {
+        return *value;
+    }
+
+    //Prefix increment operator
+    Route_man_Iterator<T> & operator ++() {
+        value = value->next;
+        return *this;
+    }
+
+    //Postfix increment operator
+    Route_man_Iterator<T> operator ++(int) {
+        auto temp = *this;
+        value = value->next;
+        return temp;
+    }
+
+    bool operator != (const Route_man_Iterator & rhs) { return value != rhs.value; }
+};
+
+
 
 
 #endif

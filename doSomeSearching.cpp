@@ -114,7 +114,7 @@ int main() {
     //Route *routes = new Route[route_num]; // 储存所有线路
     //replaced with Route_man
     
-    Route_man route_man;
+    Route_man<Route> route_man;
 
     //
     set<int> stations; // 保存所有站点
@@ -191,10 +191,10 @@ int main() {
         cout << endl;
     }
 
-    cout << "请输入你要查询的公交站(q退出)：";
     string target;
     while(true) {
         do {
+            cout << "请输入你要查询的公交站(q退出)：";
             cin >> target;
             cout << "输入了(" << target << ")" << endl;
         } while(target != "q" && name_to_num.count(target) == 0);
@@ -214,24 +214,140 @@ int main() {
     }
 
     int cmd;
+    cout << "进入编辑模式" << endl;
     cout << "你想做什么？删除某一条路径(0)、更改某一条路径(1)、增加一条新的路径(2):";
     cin >> cmd;
     switch(cmd) {
         case 0:
+        {
             int delRoute;
             cout << "输入要删除的路径的编号: ";
             // 这边可以做成选择界面
             // 每次删除之后都需要重新构建矩阵
             cin >> delRoute;
 
+            route_man.del(delRoute);
+            cout << "删除完成" << endl;
+        }
+
             break;
         case 1:
+        {
+            int target_route;
+            cout << "输入要更改的路径的编号: ";
+            cin >> target_route;
+            
+            while(!route_man.check_index_legal(target_route)) {
+                cout << "输入有误，再次输入: ";
+                cin >> target_route;
+            }
+
+            //增加一条站点还是删除一个站点
+            int cnt2 = 0;
+            for(auto i : route_man[target_route].stops) {
+                cout << num_to_name[i] << "(" << ++cnt2 << ") ";
+            }
+            cout << endl;
+
+            int cmd2;
+            cout << "删除某个站点(0), 增加一个站点(1)，输入: ";
+            cin >> cmd2;
+            int target_index;
+
+            if(cmd2 == 0) {
+                cout << "输入要删除的站点的下标: ";
+                cin >> target_index;
+                route_man[target_route].delStop(target_index);
+            } else if(cmd2 == 1) {
+                cout << "输入要增加的站点的名字和要插入的位置: ";
+                string newStop;
+                cin >> newStop >> target_index;
+                num_to_name[cnt++] = newStop;
+                name_to_num[newStop] = cnt-1;
+                cout << "新的站点编号为" << cnt-1 << endl;
+                route_man[target_route].insertStop(cnt-1, target_index);
+            }
+
+            cout << "修改之后: ";
+            bool first = true;
+            for(auto i : route_man[target_route].stops) {
+                if(!first) {
+                    cout << " -- ";
+                } else {
+                    first = false;
+                }
+                cout << num_to_name[i];
+            }
+            cout << endl;
+        }
+            
             break;
         case 2:
+        {
+            int insertRoute;
+            cout << "输入要新增的路径的编号: ";
+            // 每次删除之后都需要重新构建矩阵
+            cin >> insertRoute;
+            
+            if(route_man.check_index_legal(insertRoute)) {
+                cout << "路径已经存在，请重新输入: ";
+                cin >> insertRoute;
+            }
+
+            route_man.addRoute(insertRoute);
+            
+            vector<int> newStops;
+
+            cout << "请输入" << insertRoute << "路公交的站点数量: ";
+            int newStopsNum;
+            cin >> newStopsNum;
+
+            cout << "请依次输入站点名字";
+            string newStop;
+            while(newStopsNum--) {
+                cin >> newStop;
+                num_to_name[cnt++] = newStop;
+                name_to_num[newStop] = cnt-1;
+                newStops.push_back(cnt-1);
+                cout << "新增站点[" << newStop << "] 编号为" << cnt-1 << endl;
+            }
+
+            route_man[insertRoute].stops = newStops;
+
+            cout << "创建完成:";
+            bool first = true;
+            for(auto i : route_man[insertRoute].stops) {
+                if(!first) {
+                    cout << " -- ";
+                } else {
+                    first = false;
+                }
+                cout << num_to_name[i];
+            }
+            cout << endl;
+
+
+        }
             break;
+
         default:
             break;
     }
+
+    // 将修改写入文件
+    auto man_it = route_man.begin();
+    auto man_it_end = route_man.end();
+    for(man_it; man_it != man_it_end; man_it++) {
+        cout << (*man_it).num << endl;
+        for(auto i : (*man_it).stops) {
+            cout << num_to_name[i] << endl;
+        }
+        cout << endl;
+    }
+    
+    
+    
+
     
     return 0;
     ////////////////////////////////////////////////////////////////////
