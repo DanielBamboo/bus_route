@@ -49,3 +49,9 @@ read.cpp
 }
 
 基本功能做完了，剩下debug
+
+read.cpp -> Read_file_refactor.h/.cpp
+
+其实可以把输出rout_man到文件的这个操作整合到read_file_refactor里面
+
+可能还需要增加一个操作，也就是在创建文件输入流过后检查文件的合法性

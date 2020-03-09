@@ -12,11 +12,12 @@
 //TODO
 //stations是不是可以删除
 
-//#include "./DijkstraForDis.h"
+#include "./DijkstraForDis.h"
 //#include "./Path.h"
 //#include "newPath.h"
 #include "setPath.h"
 #include "./note/Route_man.h"
+#include "./file/Read_file_refactor.h"
 
 using namespace std;
 
@@ -56,7 +57,6 @@ map<int, int> matrix_target_route;
 //取可以直达的两种路径里代价比较小的那一个
 //并且combine过后直接使存在路径的情况value = 1，也就是可以直达
 //在之后的运算里也用这个新的value作代价了
-/*
 Dis** combineAs(Dis ***A, int route_num, int size) {
     Dis **res = new Dis*[size];
     for(int i = 0; i < size; i++) {
@@ -79,12 +79,15 @@ Dis** combineAs(Dis ***A, int route_num, int size) {
     }
     return res;
 }
-*/
  
 
 int main() {
     string station_name; 
-    ifstream fin("./route.txt", ios_base::in);
+
+    const char *filename = "/home/henryw/college/Data_Structure/bus_route/route.txt";
+    cout << "目标文件是" << filename << endl;
+    ifstream fin(filename, ios_base::in);
+    
     int cnt = 0; // 为了给站点名放置下标而设置的标识，每次加一
 
     int num; // 站点数量
@@ -182,6 +185,8 @@ int main() {
             front_name = behind_name;
         }
     }
+
+    fin.close();
 
     for(auto i : route_to_which_matrix) {
         cout << "route " << i.first << endl;
@@ -334,17 +339,35 @@ int main() {
             break;
     }
 
+    cout << "此时有" << route_man.debug_size() << "路公交" << endl;
+
+    
+    ofstream fout;
+    fout.open(filename);
+
     // 将修改写入文件
     auto man_it = route_man.begin();
     auto man_it_end = route_man.end();
+
+    bool firstIt = true;
+
     for(man_it; man_it != man_it_end; man_it++) {
-        cout << (*man_it).num << endl;
-        for(auto i : (*man_it).stops) {
-            cout << num_to_name[i] << endl;
+        if(!firstIt) {
+            fout << endl;
+        } else {
+            firstIt = false;
         }
-        cout << endl;
+        fout << (*man_it).num << endl;
+        for(auto i : (*man_it).stops) {
+            fout << num_to_name[i] << endl;
+        }
     }
+
+    cout << "开始写入文件" << endl;
     
+
+    Read_file_refactor file_refactor;
+    file_refactor(filename);
     
     
 
@@ -361,15 +384,11 @@ int main() {
     }
     */
 
-
-
-    return 0;
     //Dijkstra算法好像也要修改了
     //TODO
     //重写一个Dijkstra for Dis
     //
     //调用dijkstra算法，算出来每个矩阵的直达情况，然后给出距离
-    /* 
     for(int i = 0; i < route_num; i++) {
         Dijkstra(A[i], num, i);
     }
@@ -384,10 +403,8 @@ int main() {
         cout << "route:" << i+1 << endl;
         print_matrix(A[i], num);
     }
-    */
 
     //输出路线信息，检查是否正确
-    /*
     unordered_map<pair<int, int>, int, pair_hash> reach;
     for(int i = 0; i < route_num; i++) {
         for(int j = 0; j < num; j++) {
@@ -407,12 +424,10 @@ int main() {
         print_matrix(A[i], num);
         reach.clear();
     }
-    */
     //改用新的输出路线的方式
     
     //参考论文里面，对所有A[i]，算出来一个min矩阵，也就是min[i][j] = min(A[k][i][j], k = 0, 1, 2, 3...
     //num是公交站的数量，在这里size和num说的是同一个东西
-    /*
     Dis **B =  
         combineAs(A, route_num, num);
 
@@ -446,11 +461,9 @@ int main() {
     delete[] A;
 
     return 0;
-    */
 }
 
 //打印矩阵的信息
-/*
 void print_matrix(Dis **B, int num) {
     
     //这个矩阵是35 × 35，下标是[0-34][0-34]
@@ -495,4 +508,3 @@ void print_path_num_matrix(Dis **a, int size) {
         printf("\n");
     }
 }
-*/

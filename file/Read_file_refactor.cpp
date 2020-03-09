@@ -5,16 +5,26 @@
 #include <queue>
 #include <set>
 
+#include "Read_file_refactor.h"
+
 using namespace std;
 
 // 给一个只有站点其余什么也没有的文件添加必要的信息
 
-int main() {
+void Read_file_refactor::operator() (const char *filename) {
+    cout << "开始写入文件" << endl;
+    
     vector<string> content;
     queue<int> len_of_each_route;
     set<string> stations_set;
     vector<string> stations_vec;
-    ifstream fin("./routeWithNoList.txt", ios_base::in);
+    
+    //ifstream fin("./routeWithNoList.txt", ios_base::in);
+    ifstream fin(filename, ios_base::in);
+    if(!fin.is_open()) {
+        cout << "文件没有正常打开" << endl;
+        exit(0);
+    } 
 
     // 公交车路径存取
     queue<int> route_number;
@@ -24,8 +34,9 @@ int main() {
     
 
     getline(fin, line);
+    cout << "我们先读取到了" << line << endl;
     string::size_type sz;
-    route_number.push(std::stoi(line, &sz));
+    route_number.push(std::stoi(line));
 
     //我们现在又要开始填坑了，现在的问题在于原文件多了一行路径名称
     while(getline(fin, line)) {
@@ -51,7 +62,7 @@ int main() {
     cout << "with " << cnt+1 << " routes" << endl;
     fin.close();
 
-    ofstream fout("./routeWithNoList.txt", ios_base::out | ios_base::trunc);
+    ofstream fout(filename, ios_base::out | ios_base::trunc);
     // 输出全部站点，按添加的顺序来
     fout << stations_set.size() << endl;
     for(auto i : stations_vec) {
@@ -89,6 +100,15 @@ int main() {
     }
     fout.close();
 
+    cout << "写入完成" << endl;
     //cout << "station_num is " << stations.size();
+}
+
+/*
+int main() {
+    Read_file_refactor f;
+    f("./routeWithNoList.txt");
+    
     return 0;
 }
+*/

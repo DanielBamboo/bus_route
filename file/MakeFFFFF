@@ -1,0 +1,5 @@
+Read_file_refactor : Read_file_refactor.o
+	g++ -o Read_file_refactor Read_file_refactor.o
+
+Read_file_refactor.o : Read_file_refactor.h Read_file_refactor.cpp
+	g++ -c Read_file_refactor.h Read_file_refactor.cpp

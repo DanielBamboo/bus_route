@@ -147,9 +147,12 @@ public:
 
     Route_man_Iterator<T> end() {
         Route_man_Iterator<T> end_iter(*this);
+        end_iter.value = nullptr;
+        /*
         while((end_iter.value)->next != nullptr) {
             end_iter.value = (end_iter.value)->next;
         }
+        */
         return end_iter;
     }
 };
