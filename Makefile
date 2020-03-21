@@ -14,6 +14,6 @@ Read_file_refactor.o : ./file/Read_file_refactor.h ./file/Read_file_refactor.cpp
 	g++ -c ./file/Read_file_refactor.cpp ./file/Read_file_refactor.h
 
 clean:
-	rm *.o
-	rm ./file/*.o
-	rm ./note/*.o
+	rm -f *.o
+	rm -f ./file/*.o
+	rm -f ./note/*.o
